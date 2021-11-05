@@ -16,7 +16,7 @@ rem - OneGate reporting:
 rem   - VMID
 rem   - ONEGATE_RENDPOINT
 rem   - REPORT_READY
-rem - START_SCRIPT_BASE64 with BAT script
+rem - START_SCRIPT_BASE64 with base64 encoded BAT script
 rem
 rem Parameters for mTCP FTPSrv
 rem - SVC_FTP_ENABLE="yes"

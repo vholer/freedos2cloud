@@ -58,11 +58,11 @@ echo ERROR: Unable to run FTPSRV, not found!
 
 rem *** HTTP Server ***
 
-if "%_START_HTTPSERV%" == "" goto RUN_HTTP_END
+if "%_RUN_HTTPSERV%" == "" goto RUN_HTTP_END
 echo Starting mTCP HTTPServ ...
 if not exist \net\mtcp\httpserv.exe goto RUN_HTTP_SKIP
-\net\mtcp\httpserv.exe %_START_HTTPSERV%
-set _START_HTTPSERV=
+\net\mtcp\httpserv.exe %_RUN_HTTPSERV%
+set _RUN_HTTPSERV=
 goto RUN_HTTP_END
 
 :RUN_HTTP_SKIP
