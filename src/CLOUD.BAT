@@ -8,64 +8,81 @@ vecho /fLightCyan "  /  \   /  \  " /fGrey version %F2C_VER%
 vecho /fLightCyan "  \_________/  " /fGrey
 echo.
 
-
 rem ####################################
 rem # Create Temporary Directory
-rem #
 
 set CLOUDTMP=%TMP%\CLOUD
 if exist %CLOUDTMP%\nul deltree /Y %CLOUDTMP% >nul
 md %CLOUDTMP%
 
-
 rem ####################################
 rem # Run Configuration Scripts
-rem #
 
 pushd \cloud
     call "netcfg.bat"
 
     call "type\one.bat"
-    if "%_INITIALIZED%" == "yes" goto :TYPE_END
-    rem ... call other cloud types here ...
+    if "%_READY%" == "yes" goto :TYPE_END
 
     echo ERROR: No cloud configuration found!
 
     :TYPE_END
+    set _READY=
 popd
 
-
 rem ####################################
-rem # Cleanup Temporary Directory
-rem #
+rem # Cleanup Temp and Variables
 
 :CLEANUP
 if exist %CLOUDTMP%\nul deltree /Y %CLOUDTMP% >nul
 set F2C_VER=
 set CLOUDTMP=
-set _INITIALIZED=
 
 echo.
 
-
 rem ####################################
 rem # Run Services
-rem #
 
-if "%_START_FTPSRV%" == "" goto START_FTP_END
-set _START_FTPSRV=
+rem *** FTP Server ***
+
+if "%_RUN_FTPSRV%" == "" goto RUN_FTP_END
+set _RUN_FTPSRV=
 echo Starting mTCP FTPSrv ...
+if not exist \net\mtcp\ftpsrv.exe goto RUN_FTP_SKIP
 \net\mtcp\ftpsrv.exe
-:START_FTP_END
+goto RUN_FTP_END
 
-if "%_START_HTTPSERV%" == "" goto START_HTTP_END
+:RUN_FTP_SKIP
+echo ERROR: Unable to run FTPSRV, not found!
+:RUN_FTP_END
+
+rem *** HTTP Server ***
+
+if "%_START_HTTPSERV%" == "" goto RUN_HTTP_END
 echo Starting mTCP HTTPServ ...
+if not exist \net\mtcp\httpserv.exe goto RUN_HTTP_SKIP
 \net\mtcp\httpserv.exe %_START_HTTPSERV%
 set _START_HTTPSERV=
-:START_HTTP_END
+goto RUN_HTTP_END
 
-rem if "%_START_PASSWORD%" == "" goto START_USER_END
-rem set _START_PASSWORD=
-rem echo Starting login screen ...
-rem password /login
-rem :START_USER_END
+:RUN_HTTP_SKIP
+echo ERROR: Unable to run HTTPSERV, not found!
+:RUN_HTTP_END
+
+rem *** RMENU ***
+
+if not "%_RUN_RMENU%" == "yes" goto RUN_RMENU_END
+set _RUN_RMENU=
+echo Starting RMENU ...
+if not exist \net\rmenu\rmenu.exe goto RUN_RMENU_SKIP
+pushd \net\rmenu
+    rmenu /c1
+    echo.
+popd
+goto RUN_RMENU_END
+
+:RUN_RMENU_SKIP
+echo ERROR: Unable to run RMENU, not found!
+:RUN_RMENU_END
+
+:END

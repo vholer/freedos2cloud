@@ -60,6 +60,8 @@ source "qemu" "freedos" {
 
     # DOS prompt
     "b:<enter><wait><enter><wait>",
+    "unzip rmenu.zip -d c:\\net\\rmenu<enter><wait>",
+    "cd src<enter>",
     "install.bat /shutdown<enter>",       # Install FreeDOS2cloud scripts
   ]
 
@@ -70,7 +72,7 @@ source "qemu" "freedos" {
   format            = "qcow2"
 
   cdrom_interface   = "ide"
-  floppy_dirs       = ["src/*"]
+  floppy_dirs       = ["src", "build/source/rmenu.zip"]
   iso_checksum      = "${var.iso_checksum}"
 
   iso_urls = [
